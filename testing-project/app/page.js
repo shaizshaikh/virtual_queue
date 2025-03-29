@@ -1,10 +1,10 @@
 "use client";
-
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import QueueActionModal from "@/components/QueueActionModal";
 
-// Using Environment Variable for API Base URL
 const URL = process.env.NEXT_PUBLIC_EXPRESS_URL || "http://localhost:5000";
 
 export default function Home() {
@@ -42,7 +42,7 @@ export default function Home() {
         const verifyUser = async () => {
           try {
             const response = await fetch(`${URL}/checkUser?email=${user.email}`);
-            if (!response.ok) throw new Error("Failed to verify user");
+            if (!response.ok) throw new Error("Your entry is cleared from the queue!");
 
             const data = await response.json();
             if (data.success) {
@@ -55,12 +55,14 @@ export default function Home() {
                 localStorage.removeItem("queueUser");
               }
             } else {
-              console.error("User verification failed:", data.message);
+              // ✅ User not found or verification failed
+              toast.info("You are no longer in this queue.");
               setUserData(null);
               localStorage.removeItem("queueUser");
             }
           } catch (error) {
-            console.error("Error verifying user:", error.message);
+            // ✅ Handle API or network error
+            toast.error(error.message || "Error verifying user. Please try again.");
             setUserData(null);
             localStorage.removeItem("queueUser");
           }
@@ -68,7 +70,9 @@ export default function Home() {
 
         verifyUser();
       } catch (error) {
+        // ✅ Handle invalid localStorage data
         console.error("Error parsing stored user data:", error.message);
+        toast.error("Error reading user data. Please try logging in again.");
         localStorage.removeItem("queueUser");
         setUserData(null);
       }
@@ -153,6 +157,9 @@ export default function Home() {
           onLeaveSuccess={handleLeaveSuccess}
         />
       )}
+
+      {/* ✅ ToastContainer for showing notifications */}
+      <ToastContainer />
     </main>
   );
 }
