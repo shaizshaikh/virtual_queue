@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 const URL = process.env.NEXT_PUBLIC_EXPRESS_URL || "http://localhost:5001";
 
@@ -167,9 +166,6 @@ export default function QueueActionModal({
             {error && <p className="text-red-500 text-sm text-center mt-3">{error}</p>}
           </div>
         )}
-
-        {/* ToastContainer for Notifications */}
-        <ToastContainer />
       </div>
     </div>
   );
